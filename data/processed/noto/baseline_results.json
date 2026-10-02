@@ -1,0 +1,14 @@
+{
+  "logistic_regression": {
+    "auc_mean": 0.8552683092825337,
+    "auc_std": 0.09304467534422059,
+    "f1_mean": 0.5540578065684836,
+    "n_folds_used": 5
+  },
+  "random_forest": {
+    "auc_mean": 0.8238444878010757,
+    "auc_std": 0.09864529508931022,
+    "f1_mean": 0.5425078852068218,
+    "n_folds_used": 5
+  }
+}

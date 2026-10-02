@@ -9,37 +9,36 @@
 
 ---
 
-## 📌 Project Information
+## Project Information
 
 - **Project Title:** Dynamic Spatiotemporal Graph Neural Network for Real-Time Earthquake-Triggered Landslide Susceptibility Mapping
 - **Academic Program:** Bachelor of Technology in Computer Science and Engineering (Data Science) / AI and Data Science Engineering
 - **Institution:** School of Engineering and Technology, CHRIST (Deemed to be University), Kumbalgodu, Bengaluru 560 074
 - **Project Phase:** Phase 1 Final Report & Baseline Implementation (September 2026)
-- **Student Authors:**
-  - **B K Nandeish** (Register No: `2362315`)
+- **Student Author:**
   - **Harshitha N Reddy** (Register No: `2362332`)
 - **Project Supervisor:** **Dr. Amos Bortiew**, Department of AI and Data Science Engineering
 - **Department Head:** **Dr. Michael Moses T** | **Associate Dean:** **Dr. E A Mary Anita**
 
 ---
 
-## 📖 Executive Summary & Abstract
+## Executive Summary & Abstract
 
 Earthquake-triggered landslides represent a critical cascading hazard in mountainous terrain. Strong ground motion weakens slope materials and creates fractures, leaving slopes vulnerable to failure during the mainshock and over weeks of subsequent aftershocks. Conventional landslide susceptibility maps utilized by disaster management agencies (e.g., JMA, MLIT) are **static products** computed from pre-event topography and single-snapshot shaking footprints. Consequently, they fail to update as seismic shaking evolves across an aftershock sequence.
 
-This research project introduces a **Dynamic Spatiotemporal Graph Neural Network** framework based on a **Diffusion Convolutional Recurrent Neural Network (DCRNN)**. The study region is discretized into a uniform **Uber H3 hexagonal graph** (Resolution 8, average cell area ~0.74 km²), where nodes ingest multi-source terrain, geological, fault, and ground deformation features, alongside time-varying seismic station recordings (PGA and PGV interpolated via Ordinary Kriging).
+This research project introduces a **Dynamic Spatiotemporal Graph Neural Network** framework based on a **Diffusion Convolutional Recurrent Neural Network (DCRNN)**. The study region is discretized into a uniform **Uber H3 hexagonal graph** (R=8, cell area $\approx 0.74\text{ km}^2$), where nodes ingest multi-source terrain, geological, fault, and ground deformation features, alongside time-varying seismic station recordings (PGA and PGV interpolated via Ordinary Kriging).
 
 ### Phase 1 Deliverables (This Repository)
 1. **Nine-Stage Reproducible Data & Feature Pipeline:** Converts raw Digital Elevation Models (DEM), lithology maps, fault traces, coseismic deformation fields (InSAR / PIV), and landslide inventories into attributed H3 graphs.
 2. **Spatial Block Cross-Validation Framework:** Implements a balanced spatial block assignment algorithm (Algorithm 1) to eliminate optimistic spatial autocorrelation leakage (Tobler’s First Law).
 3. **Static Baseline Benchmarking:** Compares Logistic Regression, Random Forest, and a two-layer Graph Convolutional Network (GCN) across two independent major Japanese earthquakes:
-   - **2024 Noto Peninsula Earthquake** (Magnitude Mw 7.5, 3,311 hexagonal cells, 15.83% positive rate).
-   - **2018 Hokkaido Eastern Iburi Earthquake** (Magnitude Mw 6.6, 12,394 hexagonal cells, 2.51% positive rate).
-4. **Phase 2 Dynamic Architecture Design:** Mathematical formulation for temporal seismic signal ingestion via DCRNN and holdout transfer validation on the **2016 Kumamoto Earthquake** (Magnitude Mw 7.0).
+   - **2024 Noto Peninsula Earthquake** ($M_w 7.5$, 3,311 hexagonal cells, 15.83% positive rate).
+   - **2018 Hokkaido Eastern Iburi Earthquake** ($M_w 6.6$, 12,394 hexagonal cells, 2.51% positive rate).
+4. **Phase 2 Dynamic Architecture Design:** Mathematical formulation for temporal seismic signal ingestion via DCRNN and holdout transfer validation on the **2016 Kumamoto Earthquake** ($M_w 7.0$).
 
 ---
 
-## 🎯 Research Objectives & Status
+## Research Objectives & Status
 
 | No. | Objective Description | Current Status | Details / Deliverable |
 |:---:|:--- |:---:|:--- |
@@ -53,25 +52,25 @@ This research project introduces a **Dynamic Spatiotemporal Graph Neural Network
 
 ## 🛠️ Multi-Source Geospatial Datasets
 
-| Dataset | Noto Peninsula Event (Mw 7.5) | Hokkaido Eastern Iburi Event (Mw 6.6) | Data Source / Provider |
+| Dataset | Noto Peninsula Event ($M_w 7.5$) | Hokkaido Eastern Iburi Event ($M_w 6.6$) | Data Source / Provider |
 |:--- |:--- |:--- |:--- |
 | **Digital Elevation Model (DEM)** | JAXA AW3D30 (30 m resolution) | JAXA AW3D30 (30 m resolution via OpenTopography) | JAXA |
 | **Geology & Lithology** | GSJ Seamless Digital Geological Map V2 (1:200k) | GSJ Seamless Digital Geological Map V2 (Nationwide) | Geological Survey of Japan (AIST) |
 | **Landslide Inventory** | GSI DEM-differencing product (68,844 polygons) | GSI slope-failure & deposition distribution (3 GeoJSONs) | Geospatial Information Authority of Japan |
 | **Ground Deformation** | NIED PIV magnitude (local & wide correlation windows) | Reconstructed quasi-EW & quasi-UD components from raw GSI InSAR (Paths 018, 116, 122) | NIED / GSI |
 | **Active Fault Traces** | Notokaigan segment (stub mode) | GEM Global Active Faults Database (~13,500 nationwide traces filtered by bounding box) | GEM Foundation |
-| **Earthquake Catalogue** | JMA Catalogue (Jan 2024 – Jul 2025, Magnitude >= 2.4) | JMA Catalogue (2018) | Japan Meteorological Agency |
+| **Earthquake Catalogue** | JMA Catalogue (Jan 2024 – Jul 2025, $M \ge 2.4$) | JMA Catalogue (2018) | Japan Meteorological Agency |
 | **Strong Motion Records** | NIED K-NET and KiK-net station time series | NIED K-NET and KiK-net station summaries | NIED |
 
 ---
 
-## 📐 Methodology & System Architecture
+## Methodology & System Architecture
 
 ### 1. Spatial Discretization (Uber H3 Grid)
-The study areas are discretized using Uber's H3 hierarchical hexagonal spatial index at **Resolution 8** (average hexagon area ~0.74 km², edge length ~461 m). 
+The study areas are discretized using Uber's H3 hierarchical hexagonal spatial index at **Resolution 8** (average hexagon area $\approx 0.74\text{ km}^2$, edge length $\approx 461\text{ m}$). 
 - **Noto Grid:** 3,311 land cells clipped to geology polygon extents.
 - **Hokkaido Grid:** 12,394 valid land cells after dropping 2,915 unsurveyed peripheral cells outside InSAR/GSI survey footprints.
-- Node adjacency creates an undirected graph G = (V, E) where interior nodes possess degree k = 6.
+- Node adjacency creates an undirected graph $G=(V, E)$ where interior nodes possess degree $k=6$.
 
 ```
        / \     / \
@@ -85,41 +84,31 @@ The study areas are discretized using Uber's H3 hierarchical hexagonal spatial i
 
 ### 2. Feature Engineering & Vector Wrapping
 Each H3 hexagon accumulates terrain, lithological, geological, and deformation features:
-- **Elevation (Mean z):** Zonal mean from AW3D30 DEM.
-- **Slope (Angle in degrees):** Zonal mean of finite-difference gradient:
-  ```
-  Slope Angle = arctan( sqrt( (dz/dx)^2 + (dz/dy)^2 ) )
-  ```
-- **Aspect (Mean Direction):** Circular vector mean wrapped to 0° to 360° to prevent arithmetic wrapping artifacts:
-  ```
-  Mean Aspect = atan2( sum(sin(theta_k)) / n, sum(cos(theta_k)) / n )
-  ```
+- **Elevation ($\bar{z}$):** Zonal mean from AW3D30 DEM.
+- **Slope ($\beta$):** Zonal mean of finite-difference gradient:
+  $$\beta = \arctan\left(\sqrt{p^2 + q^2}\right), \quad \text{where } p = \frac{\partial z}{\partial x}, \, q = \frac{\partial z}{\partial y}$$
+- **Aspect ($\bar{\theta}$):** Circular mean of surface aspect vectors wrapped to $[0^\circ, 360^\circ)$ to prevent arithmetic wrapping artifacts:
+  $$\bar{\theta} = \operatorname{atan2}\left(\frac{1}{n}\sum_{k=1}^n \sin\theta_k, \; \frac{1}{n}\sum_{k=1}^n \cos\theta_k\right)$$
 - **Curvature:** Zonal mean of second-order elevation differences.
 - **Lithology:** Dominant geological class by area, one-hot encoded (rare classes pooled).
-- **Fault Distance:** Geodesic distance from cell centroid to nearest GEM fault trace (in meters).
-- **Ground Deformation:** Pixel-offset correlation magnitude (NIED PIV) for Noto; least-squares reconstructed quasi-East-West (d_EW) and quasi-Up-Down (d_UD) InSAR fields for Hokkaido:
-  ```
-  d_LOS,i = (e_i * d_EW) + (u_i * d_UD)   for satellite paths 018, 116, and 122
-  ```
+- **Fault Distance:** Geodesic distance from cell centroid to nearest GEM fault trace (meters).
+- **Ground Deformation:** Pixel-offset correlation magnitude (NIED PIV) for Noto; least-squares reconstructed quasi-East-West ($d_{\text{EW}}$) and quasi-Up-Down ($d_{\text{UD}}$) InSAR fields for Hokkaido:
+  $$d_{\text{LOS}, i} = e_i d_{\text{EW}} + u_i d_{\text{UD}}, \quad i \in \{018, 116, 122\}$$
 
-### 3. Label Construction (5% Coverage Threshold)
-Landslide target label y_c (binary 0 or 1) is defined by a 5% cell coverage threshold to mitigate scale mismatch between small landslide scars (average scar area ~827 m²) and H3 cells (~740,000 m²):
-```
-y_c = 1  if  (Landslide Area in Cell / Total Cell Area) >= 0.05  else  0
-```
+### 3. Label Construction ($\ge 5\%$ Coverage Threshold)
+Landslide target $y_c \in \{0, 1\}$ is defined by a 5% cell coverage threshold to mitigate scale mismatch between small landslide scars (avg. $827\text{ m}^2$) and H3 cells ($\approx 740,000\text{ m}^2$):
+$$y_c = \begin{cases} 1 & \text{if } \frac{A_c^{\text{ls}}}{A_c} \ge 0.05 \\ 0 & \text{otherwise} \end{cases}$$
 
 ### 4. Spatial Block Cross-Validation (Algorithm 1)
 To avoid spatial autocorrelation leakage (Tobler’s First Law), training and test splits use spatial blocking:
-- **Balanced Assignment:** Assigns spatial blocks b to folds K by minimizing joint disparity in cell count (S_b) and positive landslide count (P_b):
-  ```
-  Best Fold k* = argmin_k [ (p_k + P_b) / Total_P  +  (s_k + S_b) / Total_S ]
-  ```
+- **Balanced Assignment:** Assigns spatial blocks $b$ to folds $K$ by minimizing joint disparity in cell count ($S_b$) and positive landslide count ($P_b$):
+  $$k^* = \arg\min_k \left( \frac{p_k + P_b}{P} + \frac{s_k + S_b}{S} \right)$$
 - **Noto Configuration:** 5 spatial block folds.
-- **Hokkaido Configuration:** 3 spatial block folds (ensuring >= 82 test positives per fold).
+- **Hokkaido Configuration:** 3 spatial block folds (ensuring $\ge 82$ test positives per fold).
 
 ---
 
-## 📊 Phase 1 Baseline Results & Benchmarks
+## Phase 1 Baseline Results & Benchmarks
 
 All models were evaluated under strict Spatial Block Cross-Validation using class-balanced weights.
 
@@ -127,51 +116,46 @@ All models were evaluated under strict Spatial Block Cross-Validation using clas
 
 | Study Region | Evaluation Setup | Model Architecture | AUC-ROC (Mean ± SD) | F1 Score | Key Feature Importance Drivers |
 |:--- |:--- |:--- |:---:|:---:|:--- |
-| **Noto Peninsula**<br>(Mw 7.5, Total Cells = 3,311,<br>Positive Rate: 15.83%) | 5 Spatial Folds | Logistic Regression | 0.931 | N/A | Ground deformation (local & wide) combined ~46%, Slope ~22%, Elevation & Curvature ~32%. |
-| | | **Random Forest** | **0.947** | N/A |
-| | | Static 2-Layer GCN | 0.924 ± 0.041 | N/A |
-| **Hokkaido Eastern Iburi**<br>(Mw 6.6, Total Cells = 12,394,<br>Positive Rate: 2.51%) | 3 Spatial Folds | Logistic Regression | 0.943 ± 0.023 | 0.396 | Quasi-vertical deformation ranked 1st, followed by fault distance, elevation, slope, and quasi-EW deformation. |
-| | | **Random Forest** | **0.960 ± 0.012** | **0.495** |
-| | | Static 2-Layer GCN | 0.962 | 0.510 | *(Single-snapshot reference without temporal signals)* |
+| **Noto Peninsula**<br>($M_w 7.5, N=3,311$,<br>Pos Rate: 15.83%) | 5 Spatial Folds | Logistic Regression | $0.931$ | N/A | Ground deformation (local & wide) combined ~46%, Slope ~22%, Elevation & Curvature ~32%. |
+| | | **Random Forest** | **$0.947$** | N/A |
+| | | Static 2-Layer GCN | $0.924 \pm 0.041$ | N/A |
+| **Hokkaido Eastern Iburi**<br>($M_w 6.6, N=12,394$,<br>Pos Rate: 2.51%) | 3 Spatial Folds | Logistic Regression | $0.943 \pm 0.023$ | $0.396$ | Quasi-vertical deformation ranked 1st, followed by fault distance, elevation, slope, and quasi-EW deformation. |
+| | | **Random Forest** | **$0.960 \pm 0.012$** | **$0.495$** |
+| | | Static 2-Layer GCN | $0.962$ | $0.510$ | *(Single-snapshot reference without temporal signals)* |
 
 > [!NOTE]
 > **Key Analytical Takeaways:**
-> 1. **Random Forest Benchmark:** Random Forest produced the most robust static baselines across both regions due to its capacity to capture non-linear thresholds and interactions (e.g., deformation x slope).
-> 2. **Static GCN Behavior:** The static GCN did not surpass Random Forest on Noto (0.924 vs 0.947). On a static table, graph convolution acts as spatial smoothing; it adds no temporal signal until time-series seismic records are ingested in Phase 2.
-> 3. **Imbalance & F1 Gap:** High AUC-ROC (> 0.94) coupled with moderate F1 (~0.50) is characteristic of severe class imbalance (2.51% positive rate on Hokkaido), underscoring the operational importance of F1-tuned decision thresholds.
+> 1. **Random Forest Benchmark:** Random Forest produced the most robust static baselines across both regions due to its capacity to capture non-linear thresholds and interactions (e.g., deformation $\times$ slope).
+> 2. **Static GCN Behavior:** The static GCN did not surpass Random Forest on Noto ($0.924$ vs $0.947$). On a static table, graph convolution acts as spatial smoothing; it adds no temporal signal until time-series seismic records are ingested in Phase 2.
+> 3. **Imbalance & F1 Gap:** High AUC-ROC ($>0.94$) coupled with moderate F1 ($\sim 0.50$) is characteristic of severe class imbalance ($2.51\%$ positive rate on Hokkaido), underscoring the operational importance of F1-tuned decision thresholds.
 
 ---
 
-## ⚡ Phase 2 Dynamic Architecture: DCRNN Formulation
+## Phase 2 Dynamic Architecture: DCRNN Formulation
 
 Phase 2 models aftershock dynamics by extending the H3 graph into a **Diffusion Convolutional Recurrent Neural Network (DCRNN)**:
 
 ```
 [ Static Features s_i ] ──┐
-                         ├──> [ Node Feature Input X(t) ] ──> [ DCRNN Layer (Diffusion GRU) ] ──> [ Updated Susceptibility p_i(t) ]
+                         ├──> [ Node Feature Input X^(t) ] ──> [ DCRNN Layer (Diffusion GRU) ] ──> [ Updated Susceptibility p_i^(t) ]
 [ Seismic Kriging d_i^t ] ──┘
 ```
 
 ### Diffusion Convolution Operator
-Diffusion convolution models bidirectional spatial spread on graph G using random walks:
-```
-Diffusion_Convolution(X) = sum over k from 0 to K-1 of:
-  [ theta_(k,1) * (D_out^(-1) * W)^k  +  theta_(k,2) * (D_in^(-1) * W^T)^k ] * X
-```
-Where `D_out` and `D_in` are out-degree and in-degree matrices, and `W` is the weighted slope-connectivity adjacency matrix.
+Diffusion convolution models bidirectional spatial spread on graph $G$ using random walks:
+$$X \star_G \Theta = \sum_{k=0}^{K-1} \left( \theta_{k,1} \left(D_O^{-1} W\right)^k + \theta_{k,2} \left(D_I^{-1} W^\top\right)^k \right) X$$
+where $D_O$ and $D_I$ are out-degree and in-degree matrices, and $W$ is the weighted slope-connectivity adjacency matrix.
 
 ### Dynamic Recurrent Update Rules
-The Diffusion Gated Recurrent Unit (DGRU) updates hidden states H(t) following aftershock t:
-```
-Reset Gate:     r(t) = sigmoid( Conv( [X(t), H(t-1)] ) + b_r )
-Update Gate:    u(t) = sigmoid( Conv( [X(t), H(t-1)] ) + b_u )
-Candidate Cell: C(t) = tanh( Conv( [X(t), r(t) * H(t-1)] ) + b_c )
-Hidden State:   H(t) = u(t) * H(t-1)  +  (1 - u(t)) * C(t)
-```
+The Diffusion Gated Recurrent Unit (DGRU) updates hidden states $H^{(t)}$ following aftershock $t$:
+$$r^{(t)} = \sigma\left( \Theta_r \star_G [X^{(t)}, H^{(t-1)}] + b_r \right)$$
+$$u^{(t)} = \sigma\left( \Theta_u \star_G [X^{(t)}, H^{(t-1)}] + b_u \right)$$
+$$C^{(t)} = \tanh\left( \Theta_C \star_G [X^{(t)}, r^{(t)} \odot H^{(t-1)}] + b_c \right)$$
+$$H^{(t)} = u^{(t)} \odot H^{(t-1)} + \left(1 - u^{(t)}\right) \odot C^{(t)}$$
 
 ---
 
-## 💻 Repository Structure & Code Architecture
+## Repository Structure & Code Architecture
 
 ```
 .
@@ -208,11 +192,11 @@ Hidden State:   H(t) = u(t) * H(t-1)  +  (1 - u(t)) * C(t)
 
 ---
 
-## 🚀 Environment Setup & Execution Guide
+## Environment Setup & Execution Guide
 
 ### 1. Prerequisites & Installation
 
-Ensure Python >= 3.11 and standard geospatial libraries (GDAL/GEOS) are available.
+Ensure Python $\ge 3.11$ and standard geospatial libraries (GDAL/GEOS) are available.
 
 ```bash
 # Clone repository
@@ -265,15 +249,15 @@ python src/models/train_gnn.py --region hokkaido
 
 ---
 
-## 🛡️ Technical Safeguards & Defect Log
+## Technical Safeguards & Defect Log
 
 During Phase 1 execution, several critical data handling defects were identified and systematically resolved:
 
 | Pipeline Stage | Observed Defect / Symptom | Root Cause | Implemented Safeguard / Fix |
 |:--- |:--- |:--- |:--- |
 | **H3 Grid Generation** | ~575,000 cells generated for Noto | API version mismatch (H3 v3 vs v4 coordinate order swap) | Enforced H3 v4 API contract; added grid bounding box validation printouts. |
-| **Terrain Features** | Aspect values restricted to 96° to 278° | Standard arithmetic mean applied to circular angular variable | Implemented vector-based circular mean (atan2 of unit sine/cosine sums). |
-| **Label Construction** | 62% positive rate on Noto (unrealistic) | Any-touch spatial intersection rule triggered on sub-pixel scars | Replaced with 5% cell area coverage threshold (Landslide Area / Cell Area >= 0.05). |
+| **Terrain Features** | Aspect values restricted to $[96^\circ, 278^\circ]$ | Standard arithmetic mean applied to circular angular variable | Implemented vector-based circular mean ($\operatorname{atan2}$ of unit sine/cosine sums). |
+| **Label Construction** | 62% positive rate on Noto (unrealistic) | Any-touch spatial intersection rule triggered on sub-pixel scars | Replaced with 5% cell area coverage threshold ($A_c^{\text{ls}}/A_c \ge 0.05$). |
 | **Hokkaido DEM Processing** | All terrain feature values missing | Stale fallback path pointing to non-overlapping Noto DEM | Corrected raster paths; added spatial envelope intersection checks. |
 | **Hokkaido Feature Table** | 2,915 of 15,309 cells missing data | Bounding box padded beyond InSAR and GSI survey footprint | Dropped unsurveyed cells prior to imputation to prevent false negative bias. |
 | **Spatial Cross-Validation** | Folds without positive cells / extreme imbalance | Standard spatial blocking on highly clustered landslide occurrences | Implemented Algorithm 1 (Balanced spatial block assignment balancing count & area). |
@@ -281,9 +265,9 @@ During Phase 1 execution, several critical data handling defects were identified
 
 ---
 
-## 🌍 Societal, Environmental & SDG Impact
+## Societal, Environmental & SDG Impact
 
-- **Environmental Impact:** Identifies weakened slopes subject to secondary failure, assisting river basin management against landslide damming and sediment runoff. Computing footprint is minimal (~17 kWh GPU training, ~12 kg CO2).
+- **Environmental Impact:** Identifies weakened slopes subject to secondary failure, assisting river basin management against landslide damming and sediment runoff. Computing footprint is minimal ($\sim 17\text{ kWh}$ GPU training, $\approx 12\text{ kg CO}_2$).
 - **Societal Impact:** Empowers disaster management agencies (JMA/MLIT) with dynamic risk indicators for targeted road closures, evacuation routing, and community shelter management.
 - **Sustainable Development Goals (SDG Compliance):**
   - **SDG 11 (Sustainable Cities & Communities - Target 11.5 & 11.b):** Reduces disaster-induced casualties and economic losses through enhanced hazard preparedness.
@@ -292,7 +276,7 @@ During Phase 1 execution, several critical data handling defects were identified
 
 ---
 
-## 📜 Project Roadmap (Phase 2 & Future Scope)
+## Project Roadmap (Phase 2 & Future Scope)
 
 ```
 [Jul 2026] Literature Review & Requirement Analysis   (Completed)
@@ -307,10 +291,9 @@ During Phase 1 execution, several critical data handling defects were identified
 
 ---
 
-## 👥 Authors & Academic Credits
+## Authors & Academic Credits
 
 **Research Team:**
-- **B K Nandeish** (Register No: 2362315) — *Department of AI & Data Science Engineering, CHRIST (Deemed to be University)*
 - **Harshitha N Reddy** (Register No: 2362332) — *Department of AI & Data Science Engineering, CHRIST (Deemed to be University)*
 
 **Under the Guidance of:**
@@ -321,7 +304,6 @@ We extend our gratitude to the **Geospatial Information Authority of Japan (GSI)
 
 ---
 
-## 📄 License & Usage Note
+## License & Usage Note
 
-This project is developed for academic research purposes as part of the Bachelor of Technology degree requirements at CHRIST (Deemed to be University). All open datasets referenced remain subject to their respective issuing agency terms of use.#   D y n a m i c - S p a t i o t e m p o r a l - M a p  
- 
+This project is developed for academic research purposes as part of the Bachelor of Technology degree requirements at CHRIST (Deemed to be University). All open datasets referenced remain subject to their respective issuing agency terms of use.
